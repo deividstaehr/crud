@@ -1,0 +1,1 @@
+<h1>ProductsController (method => store)</h1>

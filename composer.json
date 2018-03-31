@@ -1,0 +1,17 @@
+{
+    "authors": [
+        {
+            "name": "Deivid Jeferson Staehr de Oliveira",
+            "email": "deividstaehr@hotmail.com",
+            "homepage": "https://github.com/deividstaehr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "app",
+            "app\\control\\": "app/controllers",
+            "core\\": "core",
+            "core\\query\\": "core/query"
+        }
+    }
+}

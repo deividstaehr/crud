@@ -1,0 +1,31 @@
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.main {
+    
+}
+
+li {
+    list-style: none;
+}
+
+.table {
+    text-align: center !important;
+}
+
+.title {
+    font-weight: bold;
+    line-height: 2em;
+    font-size: 26px;
+    color: #343a40 !important;
+    text-transform: uppercase;
+}
+
+#dFilter {
+    margin-right: 15px;
+}
+
+input:focus {
+    outline: 0;
+}
