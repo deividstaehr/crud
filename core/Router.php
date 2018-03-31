@@ -7,7 +7,8 @@ use core\Path;
 /**
  * Classe Router
  * 
- * @Implementado sistema de rotas apenas atraves de GET e POST
+ * Implementado sistema de rotas apenas atraves de GET e POST,
+ * contendo apenas um parametro do tipo numero ao final da URL
  */
 final class Router
 {
@@ -30,7 +31,7 @@ final class Router
     /**
      * @Separador de URI / parametro
      */
-    private $separator = '@';
+    private $separator = ':';
 
     /**
      * @Diretorio base para montar a URI
@@ -50,7 +51,7 @@ final class Router
      */
     public function get($uri, $callback)
     {
-        $uri = explode($this->getSeparator(), $uri)[0];
+        $uri = rtrim(explode($this->getSeparator(), $uri)[0], '/');
 
         $this->addRoute('get', $uri, $callback);
     }
@@ -58,7 +59,7 @@ final class Router
     /**
      * Rota via metodo POST
      * 
-     * @param     O mesmo de $this->get()
+     * @param O mesmo de $this->get()
      */
     public function post($uri, $callback)
     {
@@ -76,11 +77,55 @@ final class Router
         $requestUri = rtrim($base, '/');
         $requestMethod = $this->getRequestMethod();
 
+        /**
+         * Chama o metodo correspondente
+         */
         foreach ($this->getRoutes()[$requestMethod] as $route) {
-            if ($requestUri == $route['route']) {
-                call_user_func($route['closure']);
+            $match = $this->match($requestUri, $route['route']);
+
+            if ($match[0]) {
+                if (is_numeric($match[1])) {
+                    call_user_func($route['closure'], $match[1]);
+                } else {
+                    call_user_func($route['closure']);
+                }
+                
             }
         }
+    }
+
+    /**
+     * Verifica se ha correspondencia entre os array
+     * 
+     * @return Retorna o parametro para a funcao, 
+     *         caso nao exista parametro retorna null,
+     *         caso nao exista match retorna false
+     */
+    private function match($requestUri, $route)
+    {        
+        $requestRoute = explode('/', $route);
+        $requestUri = explode('/', $requestUri);
+
+        $uri = null;
+        $param = 'default';
+
+        /**
+         * Separa a URI
+         */
+        foreach ($requestUri as $uriValue) {
+            if (!is_numeric($uriValue)) {
+                $uri[] = $uriValue;
+            } else {
+                $param = $uriValue;
+            }
+        }
+
+        /**
+         * Contem o 'match' entre a URI e a Rota
+         */
+        $match = (implode('/', $uri) == implode('/', $requestRoute)) ? true : false;
+
+        return ($match) ? [true, $param] : false;
     }
 
     /**

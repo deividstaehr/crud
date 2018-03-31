@@ -9,9 +9,7 @@
     "autoload": {
         "psr-4": {
             "app\\": "app",
-            "app\\control\\": "app/controllers",
-            "core\\": "core",
-            "core\\query\\": "core/query"
+            "core\\": "core"
         }
     }
 }
