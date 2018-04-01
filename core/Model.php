@@ -26,6 +26,7 @@ abstract class Model
             
             $query = $this->getConn()->prepare($sql);
             $query->execute();
+
             $users = $query->fetchAll();
 
             $this->close();
@@ -66,7 +67,7 @@ abstract class Model
 		return null;    
     }
 
-    protected function store()
+    public function store()
     {
         if ($this->toArray() != null) {
             $sql = "
@@ -87,6 +88,11 @@ abstract class Model
             }
             return null;  
         }
+    }
+
+    public function delete()
+    {
+        
     }
 
     protected function beginTransaction()

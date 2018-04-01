@@ -25,4 +25,5 @@ class Path
 
         return self::$paths;
     }
+
 }

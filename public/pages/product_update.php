@@ -49,7 +49,7 @@
 
     <div class="form-group row">
         <div class="col-sm-10 offset-sm-2">
-            <input type="submit" class="btn btn-dark" value="Alterar" name="submit">
+            <input type="submit" class="btn btn-primary" value="Alterar" name="submit">
         </div>
     </div>
 </form>

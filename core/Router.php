@@ -107,7 +107,7 @@ final class Router
         $requestUri = explode('/', $requestUri);
 
         $uri = null;
-        $param = 'default';
+        $param = '__NOT_A_NUMBER';
 
         /**
          * Separa a URI
