@@ -90,6 +90,32 @@ abstract class Model
         }
     }
 
+    public function max()
+    {
+        $sql = "
+            SELECT max({$this->getKey()}) AS max
+              FROM {$this->getEntity()}
+        ";
+
+        try {
+            $this->beginTransaction();
+
+            $query = $this->getConn()->prepare($sql);
+            $query->execute();
+            $id = $query->fetch();
+
+            $this->close();
+
+            if ($id !== false) {
+                return $id->max;
+            }
+        } catch (\Exception $e) {
+            $this->rollback();
+            throw new \Exception($e->getMessage());
+        }
+		return null; 
+    }
+
     public function delete()
     {
         
@@ -115,32 +141,6 @@ abstract class Model
     protected function getConn()
     {
         return $this->conn;
-    }
-
-    public function max()
-    {
-        $sql = "
-            SELECT max({$this->getKey()})
-              FROM {$this->getEntity()}
-        ";
-
-        try {
-            $this->beginTransaction();
-
-            $query = $this->getConn()->prepare($sql);
-            $query->execute();
-            $id = $query->fetch();
-
-            $this->close();
-
-            if ($id !== false) {
-                return $id->max;
-            }
-        } catch (\Exception $e) {
-            $this->rollback();
-            throw new \Exception($e->getMessage());
-        }
-		return null; 
     }
 
     public function getEntity()
