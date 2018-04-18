@@ -36,7 +36,10 @@
                 $str .= "<td class='links'>";
                 $str .= "<a class='btn-update' href='".core\Path::find('pages_path')."products/update/".$product->id;
                 $str .= "' role='button'><i class='fas fa-2x fa-edit'></i></a>";
-                $str .= "<a class='btn-delete' id='".$product->nome."[-@-]".$product->id."' href=''><i class='fas fa-2x fa-trash-alt'></i></a></td></tr>";
+                $str .= "<form action='".core\Path::find('pages_path')."products/delete' method='post'>"
+                        . "<input type='hidden' name='proId' value='".$product->id."'>"
+                        . "<button type='submit' class='btn-delete'><i class='fas fa-2x fa-trash-alt'></i></button>"
+                        . "</form></td></tr>";
 
                 echo $str;
             }

@@ -96,3 +96,9 @@ a:hover {
 .input-group>.custom-file, .input-group>.custom-select, .input-group>.form-control {
     flex: none;
 }
+
+.btn-delete {
+    border: none !important;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+}

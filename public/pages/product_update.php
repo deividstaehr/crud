@@ -10,9 +10,11 @@
 <div class="form-group row">
         <label for="proId" class="col-sm-2 col-form-label">Id</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control reset-width" id="proId" value="<?=$id?>" size="5" disabled required>
+            <input type="text" class="form-control reset-width" name="proId" value="<?=$product->id?>" size="5" disabled required>
         </div>
     </div>
+    
+    <input type="hidden" name="proId" value="<?=$id?>">
 
     <div class="form-group row">
         <label for="proName" class="col-sm-2 col-form-label">Nome</label>

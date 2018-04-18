@@ -6,7 +6,6 @@ use core\DB;
 
 abstract class Model
 {
-    protected $data = [];
     protected $conn;
 
     public function __construct() {}
@@ -16,8 +15,8 @@ abstract class Model
         if ($sql === null) {
             $sql = "
                 SELECT *
-                FROM {$this->getEntity()}
-            ORDER BY {$this->getKey()}
+                  FROM {$this->getEntity()}
+              ORDER BY {$this->getKey()}
             ";
         }
         
@@ -38,7 +37,7 @@ abstract class Model
             $this->rollback();
             throw new \Exception($e->getMessage());
         }
-		return null; 
+        return null; 
     }
 
     public function find($id)
@@ -71,23 +70,66 @@ abstract class Model
     {
         if ($this->toArray() != null) {
             $sql = "
-                INSERT INTO {$this->getEntity()} ({$this->getKeyColumns()})
-                     VALUES ({$this->getDataColumns()})
-            ";
+                INSERT INTO {$this->getEntity()} ({$this->getKeyColumns()})"
+                . "VALUES ({$this->getDataColumns()})";
+                     
             try {
                 $this->beginTransaction();
     
                 $query = $this->getConn()->prepare($sql);
                 $query->execute();
-                $user = $query->fetch();
-    
+                
                 $this->close();
             } catch (\Exception $e) {
                 $this->rollback();
-                throw new \Exception($e->getMessage());
+                var_dump($e->getMessage());
             }
-            return null;  
+        } 
+    }
+    
+    public function update()
+    {
+        if ($this->toArray() != null) {
+            $sql = "
+                UPDATE {$this->getEntity()} "
+                . "SET {$this->getUpdateValues()} "
+                . "WHERE {$this->getKey()} = {$this->toArray()[$this->getKey()]}";
+                
+            try {
+                $this->beginTransaction();
+    
+                $query = $this->getConn()->prepare($sql);
+                $query->execute();
+                
+                $this->close();
+            } catch (\Exception $e) {
+                $this->rollback();
+                var_dump($e->getMessage());
+            }
+        } 
+    }
+    
+    protected function getUpdateValues()
+    {
+        $arr = [];
+        
+        foreach ($this->toArray() as $col => $val) {
+            if ($val != null && $col != $this->getKey()) {
+                array_push($arr, $col.' = '.$val);
+            }
         }
+        
+        return implode(', ', $arr);
+    }
+    
+    protected function getKeyColumns()
+    {
+        return implode(',', array_keys($this->columns));
+    }
+    
+    protected function getDataColumns()
+    {
+        return ($this->max()+1).implode(',', $this->toArray());
     }
 
     public function max()
@@ -105,7 +147,7 @@ abstract class Model
             $id = $query->fetch();
 
             $this->close();
-
+            
             if ($id !== false) {
                 return $id->max;
             }
@@ -113,12 +155,28 @@ abstract class Model
             $this->rollback();
             throw new \Exception($e->getMessage());
         }
-		return null; 
+        return null; 
     }
 
     public function delete()
     {
-        
+        if ($this->toArray() != null) {
+            $sql = "
+                DELETE FROM {$this->getEntity()} "
+                . "WHERE {$this->getKey()} = {$this->toArray()[$this->getKey()]}";
+                
+            try {
+                $this->beginTransaction();
+    
+                $query = $this->getConn()->prepare($sql);
+                $query->execute();
+                
+                $this->close();
+            } catch (\Exception $e) {
+                $this->rollback();
+                var_dump($e->getMessage());
+            }
+        } 
     }
 
     protected function beginTransaction()
@@ -144,29 +202,30 @@ abstract class Model
     }
 
     public function getEntity()
-	{
+    {
         return $this->tableName;
     }
     
     public function getKey()
-	{
-		return $this->pkey;
+    {
+        return $this->pkey;
     }
     
-    public function fromArray($data)
-	{
-		$this->data = $data;
-    }
-    
-	public function toArray()
-	{
-		return $this->data;
+    public function toArray()
+    {
+        return $this->columns;
     }
 
-	public function __get($property)
-	{
-		return (isset($this->columns[$property])) 
-			? $this->columns[$property]
-			: null;
-	}
+    public function __get($property)
+    {
+        return (isset($this->columns[$property])) 
+            ? $this->columns[$property]
+            : null;
+    }
+    
+    public function __set($column, $value)
+    {
+        $value = (is_string($value)) ? "'".$value."'" : $value;
+        $this->columns[$column] = $value;
+    }
 }
